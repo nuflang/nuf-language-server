@@ -39,19 +39,14 @@ type InitializeResult struct {
 
 // See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#serverCapabilities
 type ServerCapabilities struct {
-	TextDocumentSync   int               `json:"textDocumentSync"`
-	CompletionProvider CompletionOptions `json:"completionProvider"`
+	TextDocumentSync   int            `json:"textDocumentSync"`
+	CompletionProvider map[string]any `json:"completionProvider"`
 }
 
 // See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#initializeResult
 type ServerInfo struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
-}
-
-// See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#completionOptions
-type CompletionOptions struct {
-	TriggerCharacters []string `json:"triggerCharacters"`
 }
 
 func NewInitializeResponse(id int) InitializeResponse {
@@ -62,10 +57,8 @@ func NewInitializeResponse(id int) InitializeResponse {
 		},
 		Result: InitializeResult{
 			Capabilities: ServerCapabilities{
-				TextDocumentSync: 1,
-				CompletionProvider: CompletionOptions{
-					TriggerCharacters: []string{">"},
-				},
+				TextDocumentSync:   1,
+				CompletionProvider: map[string]any{},
 			},
 			ServerInfo: ServerInfo{
 				Name:    "nuf-lsp",

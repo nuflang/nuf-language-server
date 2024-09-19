@@ -78,7 +78,12 @@ func handleTextDocumentCompletionMethod(writer io.Writer, state analysis.State, 
 		return
 	}
 
-	response := state.Completion(request.ID, request.Params.TextDocument.URI, request.Params.Context)
+	response := state.Completion(
+		request.ID,
+		request.Params.TextDocument.URI,
+		request.Params.Context,
+		request.Params.Position,
+	)
 	writeResponse(writer, response)
 }
 

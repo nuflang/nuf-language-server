@@ -19,31 +19,36 @@ func (s *State) UpdateDocument(uri, text string) {
 	s.Documents[uri] = text
 }
 
-func (s *State) Completion(id int, uri string, context lsp.CompletionContext) lsp.CompletionResponse {
-	items := []lsp.CompletionItem{}
-
-	if context.TriggerKind == 2 {
-		if context.TriggerCharacter == ">" {
-			items = []lsp.CompletionItem{
-				{Label: "banner"},
-				{Label: "header"},
-				{Label: "complementary"},
-				{Label: "aside"},
-				{Label: "contentinfo"},
-				{Label: "footer"},
-				{Label: "form"},
-				{Label: "main"},
-				{Label: "navigation"},
-				{Label: "nav"},
-				{Label: "region"},
-				{Label: "section"},
-				{Label: "search"},
-			}
-		}
+func (s *State) Completion(
+	id int,
+	uri string,
+	context lsp.CompletionContext,
+	position lsp.Position,
+) lsp.CompletionResponse {
+	items := []lsp.CompletionItem{
+		{
+			Label:            "section_title",
+			Kind:             3,
+			InsertTextFormat: 2,
+			TextEdit: lsp.TextEdit{
+				Range: lsp.Range{
+					Start: position,
+					End:   position,
+				},
+				NewText: "section_title(\"$0\")",
+			},
+			Documentation: lsp.MarkupContent{
+				Kind:  "markdown",
+				Value: "```html\n<h1></h1>\n```",
+			},
+		},
 	}
 
 	return lsp.CompletionResponse{
-		Response: lsp.Response{Message: lsp.Message{RPC: "2.0"}, ID: id},
-		Result:   items,
+		Response: lsp.Response{
+			Message: lsp.Message{RPC: "2.0"},
+			ID:      id,
+		},
+		Result: items,
 	}
 }
