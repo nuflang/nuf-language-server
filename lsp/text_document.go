@@ -2,6 +2,12 @@ package lsp
 
 type DocumentUri = string
 
+// See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#range
+type Range struct {
+	Start Position `json:"start"`
+	End   Position `json:"end"`
+}
+
 // See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentItem
 type TextDocumentItem struct {
 	URI        DocumentUri `json:"uri"`
@@ -81,7 +87,7 @@ type CompletionItem struct {
 	InsertText       string                     `json:"insertText"`
 	InsertTextFormat InsertTextFormat           `json:"insertTextFormat"`
 	InsertTextMode   InsertTextMode             `json:"insertTextMode"`
-	// TODO: TextEdit
+	TextEdit         TextEdit                   `json:"textEdit"`
 	// TODO: TextEditText
 	// TODO: AdditionalTextEdits
 	// TODO: CommitCharacters
@@ -115,6 +121,12 @@ type InsertTextFormat = int
 
 // See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#insertTextMode
 type InsertTextMode = int
+
+// See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textEdit
+type TextEdit struct {
+	Range   Range  `json:"range"`
+	NewText string `json:"newText"`
+}
 
 // --------------------
 // NOTIFICATIONS
