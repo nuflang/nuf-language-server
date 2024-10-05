@@ -1,6 +1,10 @@
 package analysis
 
-import "github.com/nuflang/nuf-language-server/lsp"
+import (
+	"strings"
+
+	"github.com/nuflang/nuf-language-server/lsp"
+)
 
 type State struct {
 	// Map of file names to content
@@ -53,6 +57,60 @@ func (s *State) Completion(
 					NewText: "section(\"$0\")",
 				},
 			},
+		}
+	}
+
+	for row, line := range strings.Split(s.Documents[uri], "\n") {
+		if row == position.Line {
+			if position.Character > 0 && line[position.Character-1] == '"' && line[position.Character] == '"' && line[:position.Character-1] == "section(" {
+				items = []lsp.CompletionItem{
+					{
+						Label:            "main",
+						InsertTextFormat: 2,
+						TextEdit: lsp.TextEdit{
+							Range: lsp.Range{
+								Start: position,
+								End:   position,
+							},
+							NewText: "main",
+						},
+						Documentation: lsp.MarkupContent{
+							Kind:  "markdown",
+							Value: "```html\n<main></main>\n```",
+						},
+					},
+					{
+						Label:            "site_navigation",
+						InsertTextFormat: 2,
+						TextEdit: lsp.TextEdit{
+							Range: lsp.Range{
+								Start: position,
+								End:   position,
+							},
+							NewText: "site_navigation",
+						},
+						Documentation: lsp.MarkupContent{
+							Kind:  "markdown",
+							Value: "```html\n<nav></nav>\n```",
+						},
+					},
+					{
+						Label:            "region",
+						InsertTextFormat: 2,
+						TextEdit: lsp.TextEdit{
+							Range: lsp.Range{
+								Start: position,
+								End:   position,
+							},
+							NewText: "region",
+						},
+						Documentation: lsp.MarkupContent{
+							Kind:  "markdown",
+							Value: "```html\n<section></section>\n```",
+						},
+					},
+				}
+			}
 		}
 	}
 
