@@ -25,23 +25,35 @@ func (s *State) Completion(
 	context lsp.CompletionContext,
 	position lsp.Position,
 ) lsp.CompletionResponse {
-	items := []lsp.CompletionItem{
-		{
-			Label:            "section_title",
-			Kind:             3,
-			InsertTextFormat: 2,
-			TextEdit: lsp.TextEdit{
-				Range: lsp.Range{
-					Start: position,
-					End:   position,
+	items := make([]lsp.CompletionItem, 0)
+
+	if position.Character == 0 {
+		items = []lsp.CompletionItem{
+			{
+				Label:            "section_title",
+				Kind:             3,
+				InsertTextFormat: 2,
+				TextEdit: lsp.TextEdit{
+					Range: lsp.Range{
+						Start: position,
+						End:   position,
+					},
+					NewText: "section_title(\"$0\")",
 				},
-				NewText: "section_title(\"$0\")",
 			},
-			Documentation: lsp.MarkupContent{
-				Kind:  "markdown",
-				Value: "```html\n<h1></h1>\n```",
+			{
+				Label:            "section",
+				Kind:             3,
+				InsertTextFormat: 2,
+				TextEdit: lsp.TextEdit{
+					Range: lsp.Range{
+						Start: position,
+						End:   position,
+					},
+					NewText: "section(\"$0\")",
+				},
 			},
-		},
+		}
 	}
 
 	return lsp.CompletionResponse{
