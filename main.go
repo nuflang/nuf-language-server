@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"io"
+	"log"
 	"os"
 
 	"github.com/nuflang/nuf-language-server/analysis"
@@ -12,6 +13,7 @@ import (
 )
 
 func main() {
+	logger := getLogger("/home/user_one/dev/nuf-language-server/log.txt")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
 
@@ -25,11 +27,11 @@ func main() {
 			continue
 		}
 
-		handleMessage(writer, state, method, content)
+		handleMessage(logger, writer, state, method, content)
 	}
 }
 
-func handleMessage(writer io.Writer, state analysis.State, method string, content []byte) {
+func handleMessage(_ *log.Logger, writer io.Writer, state analysis.State, method string, content []byte) {
 	switch method {
 	case "initialize":
 		handleInitializeMethod(writer, content)
@@ -90,4 +92,13 @@ func handleTextDocumentCompletionMethod(writer io.Writer, state analysis.State, 
 func writeResponse(writer io.Writer, msg any) {
 	reply := rpc.EncodeMessage(msg)
 	writer.Write([]byte(reply))
+}
+
+func getLogger(filename string) *log.Logger {
+	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Panicf("Couldn't open file: %s. %s", filename, err)
+	}
+
+	return log.New(logfile, "[nuf lsp]", log.Ldate|log.Ltime|log.Lshortfile)
 }
